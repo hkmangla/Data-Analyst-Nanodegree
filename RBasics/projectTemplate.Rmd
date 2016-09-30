@@ -1,0 +1,299 @@
+White Wine Quality
+========================================================
+
+This data set described the chemical properties and quality of the White Wines.
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+# Load all of the packages that you end up using
+# in your analysis in this code chunk.
+
+# Notice that the parameter "echo" was set to FALSE for this code chunk.
+# This prevents the code from displaying in the knitted HTML output.
+# You should set echo=FALSE for all code chunks in your file.
+library(GGally)
+library(ggplot2)
+```
+
+```{r echo=FALSE, Load_the_Data}
+# Load the Data
+wineData <- read.csv('wineQualityWhites.csv')
+```
+
+# Univariate Plots Section
+```{r echo=FALSE,message=FALSE, warning=FALSE, Univariate_Plots}
+dim(wineData)
+str(wineData)
+summary(wineData)
+```
+
+This data set contains 13 variables and about 4900 observation on White wines.
+```{r echo = FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x = fixed.acidity), data = wineData) + geom_histogram(binwidth = 0.25) +
+  scale_x_continuous(breaks = seq(3,11,1), limits = c(3,11)) + xlab("Fixed Acidity")
+summary(wineData$fixed.acidity)
+unique(wineData$fixed.acidity)
+```
+
+About 80% of the Wines have the fixed acidity b/w 6 to 8. Most probably it is because 
+wines with fixed acidity below 6 becomes more acidic and above 8 becomes more basic.
+Let's take a close look on other acidic factors of wine e.g. volatile acidity and crictic acid etc.
+
+
+```{r echo = FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x = volatile.acidity), data = wineData) + geom_histogram(binwidth = 0.02) +
+  scale_x_continuous(breaks = seq(0,0.8,0.05), limits = c(0,0.8)) + xlab("Volatile Acidity")
+summary(wineData$volatile.acidity)
+
+ggplot(aes(x = citric.acid), data = wineData) + geom_histogram(binwidth = 0.03) + 
+  scale_x_continuous(breaks = seq(0,1.1,0.1), limits = c(0,1.1)) + xlab("Citric Acid")
+
+summary(wineData$citric.acid)
+```
+
+Most of the wines have the volatile acidity and citric acid in b/w 0.2 to 0.5.
+
+As like acidity there many other variables describes the chemical properties of white wines.
+
+
+```{r echo = FALSE, message=FALSE, warning=FALSE }
+ggplot(aes(x = residual.sugar), data = wineData) + geom_histogram(binwidth = 0.5) + 
+  scale_x_continuous(breaks = seq(0,22,1), limits = c(0,22)) + xlab("Residual Sugar")
+summary(wineData$residual.sugar)
+ggplot(aes(x = chlorides), data = wineData) + geom_histogram(binwidth = 0.005)  +
+  scale_x_continuous(breaks = seq(0,0.3,0.05), limits = c(0,0.3)) + xlab("Chlorides")
+summary(wineData$residual.sugar)
+
+ggplot(aes(x = free.sulfur.dioxide), data = wineData) + geom_histogram(binwidth = 2) +
+  scale_x_continuous(breaks = seq(0,100,10), limits = c(0,100)) + xlab("Free Sulfur Dioxide")
+summary(wineData$free.sulfur.dioxide)
+
+ggplot(aes(x = total.sulfur.dioxide), data = wineData) + geom_histogram(binwidth = 5) +
+  scale_x_continuous(breaks = seq(0,300,20), limits = c(0,300)) + xlab("Total Sulfur Dioxide")
+summary(wineData$total.sulfur.dioxide)
+
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+summary(wineData$density)
+ggplot(aes(x = density*100), data = wineData) + geom_histogram(binwidth = 0.01) + 
+  scale_x_continuous(breaks = seq(98.5,100.5,0.2), limits = c(98.5,100.5)) + xlab("Density in percentage")
+
+```
+
+
+Density of wine are shown in percentage.
+Density is almost uniform all around the range in b/w 99% to 100%.
+
+```{r  echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x = pH), data = wineData) + geom_histogram(binwidth = 0.01) 
+ggplot(aes(x = sulphates), data = wineData) + geom_histogram(binwidth = 0.01)
+ggplot(aes(x = alcohol), data = wineData) + geom_histogram(binwidth = 0.1) 
+```
+
+```{r  echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x = quality), data = wineData) + geom_histogram(binwidth = 1) +
+  scale_x_continuous(breaks = seq(1,10,1), limits  = c(1,10))
+summary(wineData$quality)
+table(wineData$quality)
+
+
+```
+
+One intresting thing is that no one wine have rating of 10 and most of the wines have rating 5 and 6 i.e. most of the wines have average rating.
+
+
+# Univariate Analysis
+
+### What is the structure of your dataset?
+
+There are 4900 observations on the white wines having 11 variables( ) quantifying the chemical properties of wines. One variable quality which contain the quality rating of wines.
+
+**quality:** 1,2,3,4,5,6,7,8,9,10
+
+Other Observations:
+
+  * Fixed Acidity of almost 80% wines are from 6 to 8.
+  * There is no one wine having quality rating 10.
+  * Most of the wines have quality rating 5 or 6.
+
+### What is/are the main feature(s) of interest in your dataset?
+  
+  Main feature of interest in this dataset is the quality of the wine. I'd like to determine which  chemical property of wine effects it's quality most. 
+
+### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
+  Acidity, amount of sulfur dioxide in the wine most likely contribute to the quality of wine. Density of wine also help to predict the quality.
+
+### Did you create any new variables from existing variables in the dataset?
+  Yes, I am create a new variable named remain.sulfur.dioxide. It's help me to help in bivariate investigation.
+  
+### Of the features you investigated, were there any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
+  No, there is no any unusual distribution of data.
+
+
+# Bivariate Plots Section
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+theme_set(theme_minimal(20))
+wineData_subset <- wineData[, c(8:13)]
+ggpairs(wineData_subset[sample.int(nrow(wineData_subset) ,1000), ], axisLabels = 'internal')
+```
+
+
+
+```{r echo=FALSE, warning= FALSE, message= FALSE}
+ggplot(aes(x = fixed.acidity, y = quality), data = wineData ) + geom_point() +
+  scale_x_continuous(breaks = seq(3,11,1), limits = c(3,11))
+
+cor(wineData$quality, wineData$fixed.acidity)
+by(wineData$fixed.acidity, wineData$quality, summary)
+```
+
+
+```{r echo=FALSE, warning= FALSE, message= FALSE}
+ggplot(aes(x = volatile.acidity, y = quality), data = wineData ) + geom_point() 
+cor(wineData$quality, wineData$volatile.acidity)
+```
+
+```{r echo=FALSE, warning= FALSE, message= FALSE}
+ggplot(aes(x = citric.acid, y = quality), data = wineData ) + geom_point() 
+cor(wineData$quality, wineData$citric.acid)
+```
+
+Acidity of wine does not effect its quality. Fixed Acidity, Volatile acidity and citric acid is  common in all quality rating of wine.
+Because acidity does not effect as much the quality of wine. Let's check another variable how much they effect quality rating.
+
+
+```{r echo=FALSE, warning= FALSE, message= FALSE}
+ggplot(aes(x = residual.sugar, y = quality), data = wineData ) + geom_point() 
+cor(wineData$quality, wineData$residual.sugar)
+```
+
+
+```{r echo=FALSE, warning= FALSE, message= FALSE}
+ggplot(aes(x = chlorides, y = quality), data = wineData ) + geom_point() 
+cor(wineData$quality, wineData$chlorides)
+```
+
+
+```{r echo=FALSE, warning= FALSE, message= FALSE}
+ggplot(aes(x = free.sulfur.dioxide, y = quality), data = wineData ) + geom_point() 
+cor(wineData$quality, wineData$free.sulfur.dioxide)
+```
+
+
+```{r echo=FALSE, warning= FALSE, message= FALSE}
+ggplot(aes(x = total.sulfur.dioxide, y = quality), data = wineData ) + geom_point() 
+cor(wineData$quality, wineData$total.sulfur.dioxide)
+```
+
+
+```{r echo=FALSE, warning= FALSE, message= FALSE}
+ggplot(aes(x = density, y = quality), data = wineData ) + geom_point() 
+cor(wineData$quality, wineData$density)
+by(wineData$density, wineData$quality, summary)
+```
+
+
+```{r echo=FALSE, warning= FALSE, message= FALSE}
+ggplot(aes(x = pH, y = quality), data = wineData ) + geom_point() 
+```
+
+
+```{r echo=FALSE, warning= FALSE, message= FALSE}
+ggplot(aes(x = sulphates, y = quality), data = wineData ) + geom_point() 
+```
+
+
+```{r echo=FALSE, warning= FALSE, message= FALSE}
+ggplot(aes(x = alcohol, y = quality), data = wineData ) + geom_point() 
+by(wineData$alcohol, wineData$quality, summary)
+```
+
+As we can saw that no one individual chemical property estimates the quality of wine. So, we have to check with two or other variable that how much they effect quality rating.
+
+```{r echo=FALSE, warning= FALSE, message= FALSE}
+ggplot(aes(x = fixed.acidity, y = pH), data = wineData ) + geom_jitter(alpha = 1/10) +
+  geom_smooth(method = 'lm')
+
+ggplot(aes(y = density, x = alcohol), data = wineData ) + geom_point() +
+  scale_y_continuous(limits = c(0.989,1.0)) + geom_smooth(method = 'lm')
+```
+
+
+# Bivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
+  I investigate the relationship between quality rating of wine and it's chemical properties. I found that any individual chemical property of wine does not effect the quality rating of wines.
+  
+  
+### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
+  Yes, I am observe an two intresting relationship one is between alcohol and density other is 
+  between pH and fixed acidity.
+  
+  As we increase amount of alcohol in the wine it's density decrease. So, alcohol have a inverse correlation with density.
+  
+  As expected increment in fixed acidity cause dercrement in pH value of wine.  
+  
+### What was the strongest relationship you found?
+  There is no strong relationship of any variable with quality of wine.
+
+
+
+# Multivariate Plots Section
+
+```{r echo=FALSE, warning=FALSE, message=FALSE, Multivariate_Plots}
+ggplot(aes(x=density, y = alcohol), data = wineData) + facet_wrap(~quality) + geom_line()+
+  geom_smooth() + scale_x_continuous(limits = c(0.99, 1.0))
+```
+
+
+```{r echo=FALSE, warning=FALSE, message=FALSE, Multivariate_Plots}
+ggplot(aes(x=density, y = alcohol), data = wineData) + geom_line( color = wineData$quality)+
+  scale_x_continuous(limits = c(0.99, 1.0))
+```
+
+
+
+# Multivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
+  In this data set I do not found any intresting relationship except density and alcohol and acidity and pH.
+  
+### Were there any interesting or surprising interactions between features?
+  There is no suprising relationship between any variable in this data set.
+  
+### OPTIONAL: Did you create any models with your dataset? Discuss the strengths and limitations of your model.
+  No, I did not create any model with my dataset.
+  
+  
+------
+
+# Final Plots and Summary
+
+### Plot One
+```{r echo=FALSE, Plot_One}
+
+```
+
+### Description One
+
+
+### Plot Two
+```{r echo=FALSE, Plot_Two}
+
+```
+
+### Description Two
+
+
+### Plot Three
+```{r echo=FALSE, Plot_Three}
+
+```
+
+### Description Three
+
+------
+
+# Reflection
+  This data set contain about 4900 observation of white wines quality and their chemical properties.      

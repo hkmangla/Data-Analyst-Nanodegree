@@ -1,0 +1,2 @@
+Descriptive statistics:- mean,sd etc;
+Inferential statistics :- Hypothesis test (value of t-test,df,p-value,direction of test etc)

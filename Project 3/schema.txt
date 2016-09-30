@@ -1,0 +1,35 @@
+CREATE TABLE nodes_tags(
+	id INTEGER,
+	key TEXT,
+	value TEXT,
+	type TEXT
+);
+CREATE TABLE nodes(
+	id integer primary key,
+	lat float,
+	lon float,
+	user text,
+	uid integer,
+	version text,
+	changeset integer,
+	timestamp text
+);
+CREATE TABLE ways(
+	id integer,
+	user text,
+	uid integer,
+	version text,
+	changeset integer,
+	timestamp text
+);
+create table ways_nodes(
+	id integer,
+	node_id integer,
+	position integer
+);
+CREATE TABLE ways_tags(
+	id INTEGER,
+	key TEXT,
+	value TEXT,
+	type TEXT
+);
